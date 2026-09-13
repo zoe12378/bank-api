@@ -30,8 +30,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "登入並取得 access token")
+    @Operation(summary = "登入並取得 access token 與 refresh token")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "使用 refresh token 取得新 token 組")
+    public LoginResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return authService.refresh(request);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "撤銷 refresh token 並登出")
+    public void logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request);
     }
 }

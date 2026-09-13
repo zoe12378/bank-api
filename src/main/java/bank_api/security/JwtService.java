@@ -38,6 +38,10 @@ public class JwtService {
                 .compact();
     }
 
+    public long getExpirationMinutes() {
+        return expirationMinutes;
+    }
+
     public String extractUsername(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey())

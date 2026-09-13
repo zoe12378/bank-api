@@ -40,7 +40,8 @@ Client
 
 1. [database/schema.sql](database/schema.sql)（建立 `bank_demo`、帳戶、交易紀錄與本機範例資料）。
 2. [database/user_schema.sql](database/user_schema.sql)
-3. 註冊 `huang_demo` 等測試使用者後，再執行 [database/assign_demo_account.sql](database/assign_demo_account.sql) 將 A001 指派給該使用者。
+3. [database/refresh_token_schema.sql](database/refresh_token_schema.sql)
+4. 註冊 `huang_demo` 等測試使用者後，再執行 [database/assign_demo_account.sql](database/assign_demo_account.sql) 將 A001 指派給該使用者。
 
 ### 2. 設定環境變數並啟動
 
@@ -123,9 +124,17 @@ Authorization: Bearer <accessToken>
 
 使用順序：
 
-1. 先執行 `POST /api/auth/login` 取得 `accessToken`。
+1. 先執行 `POST /api/auth/login` 取得 `accessToken` 與 `refreshToken`。
 2. 點選右上角 **Authorize**，貼上 token（只貼 token 本身，不要加上 `Bearer `）。
 3. 即可在 Swagger UI 測試帳戶、交易紀錄與轉帳 API。
+
+## Token 安全設計
+
+- Access token 預設有效 30 分鐘，只用於受保護 API。
+- Refresh token 預設有效 7 天，資料庫僅保存 SHA-256 雜湊值。
+- `POST /api/auth/refresh` 會撤銷舊 refresh token 並發出一組新 token（token rotation）。
+- `POST /api/auth/logout` 會撤銷目前的 refresh token。
+- 正式環境應將 refresh token 放在 `HttpOnly`、`Secure` Cookie；本專案前端為方便展示，暫存在瀏覽器分頁記憶體中。
 
 ## 測試
 
