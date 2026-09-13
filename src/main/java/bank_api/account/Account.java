@@ -4,8 +4,13 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
+import bank_api.auth.AppUser;
 
 /**
  * 對應 MySQL 的 accounts 資料表。
@@ -24,6 +29,13 @@ public class Account {
 
     private BigDecimal balance;
 
+    /**
+     * 帳戶的擁有者。資料庫的 user_id 是外鍵，不能只靠前端傳入帳號判斷權限。
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private AppUser user;
+
     protected Account() {
         // JPA 需要無參數建構子來建立 Entity。
     }
@@ -38,6 +50,10 @@ public class Account {
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public boolean belongsTo(String username) {
+        return user != null && user.getUsername().equals(username);
     }
 
     /**

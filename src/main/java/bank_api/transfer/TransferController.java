@@ -1,6 +1,7 @@
 package bank_api.transfer;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,9 @@ public class TransferController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransferResponse transfer(@Valid @RequestBody TransferRequest request) {
-        return transferService.transfer(request);
+    public TransferResponse transfer(
+            @Valid @RequestBody TransferRequest request,
+            Authentication authentication) {
+        return transferService.transfer(request, authentication.getName());
     }
 }

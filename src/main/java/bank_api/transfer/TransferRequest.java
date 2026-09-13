@@ -10,7 +10,8 @@ import jakarta.validation.constraints.NotNull;
  * POST /api/transfers 接收的 JSON 格式。
  */
 public record TransferRequest(
-        @NotBlank String fromAccountNumber,
-        @NotBlank String toAccountNumber,
-        @NotNull @DecimalMin(value = "0.01") BigDecimal amount) {
+        @NotBlank(message = "轉出帳號不可空白") String fromAccountNumber,
+        @NotBlank(message = "轉入帳號不可空白") String toAccountNumber,
+        @NotNull(message = "轉帳金額不可空白")
+        @DecimalMin(value = "0.01", message = "轉帳金額至少為 0.01") BigDecimal amount) {
 }

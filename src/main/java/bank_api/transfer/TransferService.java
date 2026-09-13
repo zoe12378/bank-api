@@ -36,7 +36,7 @@ public class TransferService {
      * @Transactional 確保扣款、入帳及兩筆紀錄會一起提交；若方法中拋出例外則一起 rollback。
      */
     @Transactional
-    public TransferResponse transfer(TransferRequest request) {
+    public TransferResponse transfer(TransferRequest request, String username) {
         if (request.fromAccountNumber().equals(request.toAccountNumber())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "不可轉帳給同一帳戶");
         }
@@ -44,6 +44,11 @@ public class TransferService {
         Account sender = findAccount(request.fromAccountNumber());
         Account receiver = findAccount(request.toAccountNumber());
         BigDecimal amount = request.amount().setScale(2, RoundingMode.HALF_UP);
+
+        // 即使知道帳號，也只能從自己擁有的帳戶扣款。
+        if (!sender.belongsTo(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "你沒有使用此轉出帳號的權限");
+        }
 
         try {
             sender.debit(amount);
