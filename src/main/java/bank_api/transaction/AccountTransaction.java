@@ -1,6 +1,7 @@
 package bank_api.transaction;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +44,9 @@ public class AccountTransaction {
     @Column(name = "failure_reason")
     private String failureReason;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     protected AccountTransaction() {
         // JPA 使用。
     }
@@ -62,5 +66,41 @@ public class AccountTransaction {
         this.balanceAfter = balanceAfter;
         this.counterpartyAccountNumber = counterpartyAccountNumber;
         this.failureReason = failureReason;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public BigDecimal getBalanceAfter() {
+        return balanceAfter;
+    }
+
+    public String getCounterpartyAccountNumber() {
+        return counterpartyAccountNumber;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

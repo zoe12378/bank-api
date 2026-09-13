@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import bank_api.transaction.AccountTransactionRepository;
+import bank_api.transaction.TransactionResponse;
+
 /**
  * 接收 HTTP 請求並回傳 JSON。
  */
@@ -18,9 +21,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class AccountController {
 
     private final AccountRepository accountRepository;
+    private final AccountTransactionRepository transactionRepository;
 
-    public AccountController(AccountRepository accountRepository) {
+    public AccountController(
+            AccountRepository accountRepository,
+            AccountTransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @GetMapping
@@ -44,5 +51,23 @@ public class AccountController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "找不到你的帳號：" + accountNumber));
+    }
+
+    /**
+     * 交易紀錄屬於敏感資料，必須先確認帳戶是登入者所擁有。
+     */
+    @GetMapping("/{accountNumber}/transactions")
+    public List<TransactionResponse> getMyTransactions(
+            @PathVariable String accountNumber,
+            Authentication authentication) {
+        accountRepository.findByAccountNumberAndUserUsername(accountNumber, authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "找不到你的帳號：" + accountNumber));
+
+        return transactionRepository.findByAccountNumberOrderByCreatedAtDescIdDesc(accountNumber)
+                .stream()
+                .map(TransactionResponse::from)
+                .toList();
     }
 }
