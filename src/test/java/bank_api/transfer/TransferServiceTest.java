@@ -47,8 +47,8 @@ class TransferServiceTest {
         aliceAccount = new Account("A001", "Alice", new BigDecimal("1000.00"), aliceUser);
         bobAccount = new Account("B001", "Bob", new BigDecimal("650.00"), null);
 
-        when(accountRepository.findById("A001")).thenReturn(Optional.of(aliceAccount));
-        when(accountRepository.findById("B001")).thenReturn(Optional.of(bobAccount));
+        when(accountRepository.findByIdForUpdate("A001")).thenReturn(Optional.of(aliceAccount));
+        when(accountRepository.findByIdForUpdate("B001")).thenReturn(Optional.of(bobAccount));
     }
 
     @Test
@@ -59,6 +59,8 @@ class TransferServiceTest {
 
         assertThat(response.fromBalance()).isEqualByComparingTo("990.00");
         assertThat(response.toBalance()).isEqualByComparingTo("660.00");
+        verify(accountRepository).findByIdForUpdate("A001");
+        verify(accountRepository).findByIdForUpdate("B001");
         verify(transactionRepository).saveAll(any());
     }
 
@@ -78,7 +80,7 @@ class TransferServiceTest {
     void transfer_whenBalanceIsInsufficient_returnsBadRequestAndDoesNotWriteRecords() {
         Account lowBalanceAccount = new Account(
                 "A001", "Alice", new BigDecimal("5.00"), new AppUser("alice_user", "hash"));
-        when(accountRepository.findById("A001")).thenReturn(Optional.of(lowBalanceAccount));
+        when(accountRepository.findByIdForUpdate("A001")).thenReturn(Optional.of(lowBalanceAccount));
 
         assertThatThrownBy(() -> transferService.transfer(
                 new TransferRequest("A001", "B001", new BigDecimal("10.00")),

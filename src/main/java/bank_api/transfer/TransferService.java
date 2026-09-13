@@ -41,8 +41,22 @@ public class TransferService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "不可轉帳給同一帳戶");
         }
 
-        Account sender = findAccount(request.fromAccountNumber());
-        Account receiver = findAccount(request.toAccountNumber());
+        // 所有轉帳依帳號字母順序取得鎖，降低 A→B 與 B→A 同時發生時的死鎖機率。
+        String firstAccountNumber = request.fromAccountNumber().compareTo(request.toAccountNumber()) < 0
+                ? request.fromAccountNumber()
+                : request.toAccountNumber();
+        String secondAccountNumber = firstAccountNumber.equals(request.fromAccountNumber())
+                ? request.toAccountNumber()
+                : request.fromAccountNumber();
+
+        Account firstAccount = findAccountForUpdate(firstAccountNumber);
+        Account secondAccount = findAccountForUpdate(secondAccountNumber);
+        Account sender = firstAccount.getAccountNumber().equals(request.fromAccountNumber())
+                ? firstAccount
+                : secondAccount;
+        Account receiver = firstAccount.getAccountNumber().equals(request.toAccountNumber())
+                ? firstAccount
+                : secondAccount;
         BigDecimal amount = request.amount().setScale(2, RoundingMode.HALF_UP);
 
         // 即使知道帳號，也只能從自己擁有的帳戶扣款。
@@ -83,8 +97,8 @@ public class TransferService {
                 receiver.getBalance());
     }
 
-    private Account findAccount(String accountNumber) {
-        return accountRepository.findById(accountNumber)
+    private Account findAccountForUpdate(String accountNumber) {
+        return accountRepository.findByIdForUpdate(accountNumber)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "找不到帳號：" + accountNumber));
