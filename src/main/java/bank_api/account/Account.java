@@ -40,6 +40,16 @@ public class Account {
         // JPA 需要無參數建構子來建立 Entity。
     }
 
+    /**
+     * 建立帳戶資料。正式新增帳戶時，應由 service 做更多身分與輸入檢查。
+     */
+    public Account(String accountNumber, String ownerName, BigDecimal balance, AppUser user) {
+        this.accountNumber = accountNumber;
+        this.ownerName = ownerName;
+        this.balance = balance;
+        this.user = user;
+    }
+
     public String getAccountNumber() {
         return accountNumber;
     }
