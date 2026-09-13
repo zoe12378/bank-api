@@ -5,5 +5,7 @@ public record LoginResponse(
         String refreshToken,
         String tokenType,
         long expiresInMinutes,
-        long refreshExpiresInDays) {
+        long refreshExpiresInDays,
+        String username,
+        String role) {
 }

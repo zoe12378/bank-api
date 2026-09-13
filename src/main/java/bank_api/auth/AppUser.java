@@ -50,4 +50,8 @@ public class AppUser {
     public String getRole() {
         return role;
     }
+
+    public void promoteToAdmin() {
+        role = "ROLE_ADMIN";
+    }
 }

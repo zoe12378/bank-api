@@ -68,7 +68,9 @@ public class AuthService {
                 refreshTokenService.issue(user),
                 "Bearer",
                 jwtService.getExpirationMinutes(),
-                refreshTokenService.getExpirationDays());
+                refreshTokenService.getExpirationDays(),
+                user.getUsername(),
+                user.getRole());
     }
 
     private ResponseStatusException invalidCredentials() {

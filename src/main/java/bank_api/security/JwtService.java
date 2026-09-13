@@ -43,12 +43,23 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        Object role = parseClaims(token).get("role");
+        if (role == null) {
+            throw new IllegalArgumentException("JWT 缺少角色資訊");
+        }
+        return role.toString();
+    }
+
+    private io.jsonwebtoken.Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey())
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
     }
 
     private SecretKey signingKey() {

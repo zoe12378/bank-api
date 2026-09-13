@@ -136,6 +136,12 @@ Authorization: Bearer <accessToken>
 - `POST /api/auth/logout` 會撤銷目前的 refresh token。
 - 正式環境應將 refresh token 放在 `HttpOnly`、`Secure` Cookie；本專案前端為方便展示，暫存在瀏覽器分頁記憶體中。
 
+## 管理者帳戶建立
+
+- `POST /api/admin/accounts` 僅限 JWT 角色為 `ROLE_ADMIN` 的使用者呼叫。
+- 建立帳戶會同時寫入一筆 `OPEN_ACCOUNT` 稽核紀錄，避免帳戶餘額沒有來源。
+- 本機展示可執行 [database/promote_huang_demo_admin.sql](database/promote_huang_demo_admin.sql) 將 `huang_demo` 升為管理者；執行後需要重新登入，讓新 JWT 帶入 `ROLE_ADMIN`。
+
 ## 測試
 
 ```powershell
