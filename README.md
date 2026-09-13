@@ -116,3 +116,13 @@ Authorization: Bearer <accessToken>
 - 使用 Testcontainers 建立真正連 MySQL 的整合測試。
 - 加入 refresh token、帳戶建立流程與管理者權限。
 - 建立 OpenAPI / Swagger 文件。
+
+## API 文件（Swagger UI）
+
+應用程式啟動後，開啟 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)。
+
+使用順序：
+
+1. 先執行 `POST /api/auth/login` 取得 `accessToken`。
+2. 點選右上角 **Authorize**，貼上 token（只貼 token 本身，不要加上 `Bearer `）。
+3. 即可在 Swagger UI 測試帳戶、交易紀錄與轉帳 API。

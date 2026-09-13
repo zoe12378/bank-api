@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 提供轉帳 HTTP API。
  */
 @RestController
 @RequestMapping("/api/transfers")
+@Tag(name = "Transfers", description = "只能從登入者自己擁有的帳戶轉出款項。")
+@SecurityRequirement(name = "bearerAuth")
 public class TransferController {
 
     private final TransferService transferService;
@@ -25,6 +30,7 @@ public class TransferController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "進行轉帳")
     public TransferResponse transfer(
             @Valid @RequestBody TransferRequest request,
             Authentication authentication) {

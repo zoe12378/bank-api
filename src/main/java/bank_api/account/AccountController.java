@@ -20,6 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import bank_api.transaction.AccountTransactionRepository;
 import bank_api.transaction.TransactionPageResponse;
 
@@ -29,6 +32,8 @@ import bank_api.transaction.TransactionPageResponse;
 @RestController
 @RequestMapping("/api/accounts")
 @Validated
+@Tag(name = "Accounts", description = "登入者可讀取自己擁有的帳戶與交易紀錄。")
+@SecurityRequirement(name = "bearerAuth")
 public class AccountController {
 
     private final AccountRepository accountRepository;
@@ -42,6 +47,7 @@ public class AccountController {
     }
 
     @GetMapping
+    @Operation(summary = "取得我的帳戶")
     public List<AccountResponse> getMyAccounts(Authentication authentication) {
         return accountRepository.findByUserUsername(authentication.getName())
                 .stream()
@@ -54,6 +60,7 @@ public class AccountController {
      * 路徑中的 {accountNumber} 會由 Spring 自動帶入方法參數。
      */
     @GetMapping("/{accountNumber}")
+    @Operation(summary = "取得我的單一帳戶")
     public AccountResponse getMyAccount(
             @PathVariable String accountNumber,
             Authentication authentication) {
@@ -68,6 +75,7 @@ public class AccountController {
      * 交易紀錄屬於敏感資料，必須先確認帳戶是登入者所擁有。
      */
     @GetMapping("/{accountNumber}/transactions")
+    @Operation(summary = "取得我的交易紀錄", description = "可用 page、size、from、to 進行分頁與日期篩選。")
     public TransactionPageResponse getMyTransactions(
             @PathVariable String accountNumber,
             Authentication authentication,
