@@ -126,3 +126,14 @@ Authorization: Bearer <accessToken>
 1. 先執行 `POST /api/auth/login` 取得 `accessToken`。
 2. 點選右上角 **Authorize**，貼上 token（只貼 token 本身，不要加上 `Bearer `）。
 3. 即可在 Swagger UI 測試帳戶、交易紀錄與轉帳 API。
+
+## 測試
+
+```powershell
+.\mvnw.cmd test
+```
+
+- `TransferServiceTest`：不啟動 Spring 或 MySQL 的單元測試，快速驗證轉帳規則。
+- `TransferPersistenceIntegrationTest`：透過 Testcontainers 啟動暫時的 MySQL 8.0 容器，驗證 JPA 寫入、MySQL 與轉帳稽核紀錄能一起運作；不會使用或修改本機的 `bank_demo`。
+
+執行整合測試前，請先開啟 Docker Desktop 並確認 `docker info` 可正常執行。第一次測試會下載 MySQL 映像檔，因此花較久是正常的。
