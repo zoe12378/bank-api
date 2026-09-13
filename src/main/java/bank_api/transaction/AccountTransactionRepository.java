@@ -1,10 +1,25 @@
 package bank_api.transaction;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDateTime;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AccountTransactionRepository extends JpaRepository<AccountTransaction, Long> {
 
-    List<AccountTransaction> findByAccountNumberOrderByCreatedAtDescIdDesc(String accountNumber);
+    @Query("""
+            SELECT entry
+            FROM AccountTransaction entry
+            WHERE entry.accountNumber = :accountNumber
+              AND (:fromTime IS NULL OR entry.createdAt >= :fromTime)
+              AND (:toTime IS NULL OR entry.createdAt < :toTime)
+            """)
+    Page<AccountTransaction> findHistory(
+            @Param("accountNumber") String accountNumber,
+            @Param("fromTime") LocalDateTime fromTime,
+            @Param("toTime") LocalDateTime toTime,
+            Pageable pageable);
 }

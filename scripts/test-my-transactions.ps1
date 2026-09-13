@@ -13,12 +13,13 @@ try {
         -ContentType 'application/json' `
         -Body $loginJson
 
-    $transactions = Invoke-RestMethod `
+    $history = Invoke-RestMethod `
         -Method Get `
-        -Uri "$api/api/accounts/A001/transactions" `
+        -Uri "$api/api/accounts/A001/transactions?page=0&size=3" `
         -Headers @{ Authorization = "Bearer $($login.accessToken)" }
 
-    $transactions | Format-Table id, transactionType, status, amount, balanceAfter, counterpartyAccountNumber, createdAt
+    Write-Output "Page $($history.page) of $($history.totalPages); total transactions: $($history.totalElements)"
+    $history.content | Format-Table id, transactionType, status, amount, balanceAfter, counterpartyAccountNumber, createdAt
 } catch {
     Write-Output "Request failed: $($PSItem.Exception.Message)"
     if ($PSItem.ErrorDetails.Message) {
