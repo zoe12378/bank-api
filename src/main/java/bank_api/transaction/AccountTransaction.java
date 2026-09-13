@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 /**
@@ -102,5 +103,15 @@ public class AccountTransaction {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    /**
+     * 新交易尚未指定時間時，以建立當下時間寫入，避免 JPA 插入 NULL。
+     */
+    @PrePersist
+    void assignCreatedAt() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 }
