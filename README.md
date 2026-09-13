@@ -1,5 +1,7 @@
 # Bank API
 
+[![Backend CI](https://github.com/zoe12378/bank-api/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/zoe12378/bank-api/actions/workflows/backend-ci.yml)
+
 以 Java、Spring Boot 與 MySQL 實作的銀行帳戶後端練習專案。重點不是畫面，而是把金融系統常見的資料一致性、權限與稽核規則落實在 API。
 
 ## 功能
