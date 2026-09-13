@@ -38,7 +38,7 @@ Client
 
 先依序在 MySQL Workbench 執行：
 
-1. Day 2 的帳戶與交易資料表 SQL。
+1. [database/schema.sql](database/schema.sql)（建立 `bank_demo`、帳戶、交易紀錄與本機範例資料）。
 2. [database/user_schema.sql](database/user_schema.sql)
 3. 註冊 `huang_demo` 等測試使用者後，再執行 [database/assign_demo_account.sql](database/assign_demo_account.sql) 將 A001 指派給該使用者。
 
@@ -111,8 +111,8 @@ Authorization: Bearer <accessToken>
 - [scripts/test-owned-transfer.ps1](scripts/test-owned-transfer.ps1)：驗證自己的帳戶可轉帳。
 - [scripts/test-my-transactions.ps1](scripts/test-my-transactions.ps1)：查看自己的交易紀錄分頁。
 
-## 下一步
+## 後續可擴充項目
 
 - 使用 Testcontainers 建立真正連 MySQL 的整合測試。
 - 加入 refresh token、帳戶建立流程與管理者權限。
-- 建立前端或 OpenAPI / Swagger 文件。
+- 建立 OpenAPI / Swagger 文件。
