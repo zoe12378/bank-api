@@ -2,16 +2,22 @@
 
 [![Backend CI](https://github.com/zoe12378/bank-api/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/zoe12378/bank-api/actions/workflows/backend-ci.yml)
 
-以 Java、Spring Boot 與 MySQL 實作的銀行帳戶後端練習專案。重點不是畫面，而是把金融系統常見的資料一致性、權限與稽核規則落實在 API。
+以 Java、Spring Boot 與 MySQL 實作的銀行帳戶後端作品。重點不是單純的 CRUD，而是把金融系統常見的資料一致性、權限控管與稽核規則落實在 API。
+
+完整展示環境由三個 repository 組成：
+
+- [Bank Web](https://github.com/zoe12378/bank-web)：React 操作介面。
+- [Bank Stack](https://github.com/zoe12378/bank-stack)：以 Docker Compose 一次啟動 MySQL、API 與前端。
 
 ## 功能
 
-- 使用者註冊、BCrypt 密碼雜湊與 JWT 登入。
+- 使用者註冊、BCrypt 密碼雜湊、JWT 登入與 refresh token rotation。
 - 僅能查看自己擁有的帳戶與交易紀錄。
 - 帳戶間轉帳：扣款、入帳與兩筆交易紀錄在同一個資料庫交易中完成。
 - 轉帳時使用悲觀鎖，降低同一帳戶同時扣款造成餘額不一致的風險。
 - 交易紀錄支援分頁與日期範圍查詢。
-- 統一的 JSON 錯誤格式與轉帳商業規則單元測試。
+- 管理者可替既有使用者建立帳戶，並自動留下開戶稽核紀錄。
+- OpenAPI / Swagger UI 文件，以及單元測試與 Testcontainers MySQL 整合測試。
 
 ## 技術
 
@@ -19,8 +25,8 @@
 - Spring Boot 4 / Spring MVC / Spring Data JPA / Spring Security
 - MySQL 8
 - Maven
-- JUnit 5、Mockito
-- JJWT
+- JUnit 5、Mockito、Testcontainers
+- JJWT、springdoc OpenAPI
 
 ## 架構概念
 
@@ -98,28 +104,6 @@ Authorization: Bearer <accessToken>
 - `@Transactional` 讓扣款、入帳、交易紀錄成功或失敗時一起提交或回滾。
 - `PESSIMISTIC_WRITE` 鎖定參與轉帳的帳戶，並以固定順序取得鎖，降低併發衝突與死鎖風險。
 
-## 測試
-
-執行不需連 MySQL 的單元測試：
-
-```powershell
-.\mvnw.cmd test
-```
-
-目前涵蓋：合法轉帳、未擁有帳戶的轉帳、餘額不足與鎖定查詢使用。
-
-另外提供本機手動驗證腳本：
-
-- [scripts/test-transfer-permission.ps1](scripts/test-transfer-permission.ps1)：驗證不可從他人帳戶扣款。
-- [scripts/test-owned-transfer.ps1](scripts/test-owned-transfer.ps1)：驗證自己的帳戶可轉帳。
-- [scripts/test-my-transactions.ps1](scripts/test-my-transactions.ps1)：查看自己的交易紀錄分頁。
-
-## 後續可擴充項目
-
-- 使用 Testcontainers 建立真正連 MySQL 的整合測試。
-- 加入 refresh token、帳戶建立流程與管理者權限。
-- 建立 OpenAPI / Swagger 文件。
-
 ## API 文件（Swagger UI）
 
 應用程式啟動後，開啟 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)。
@@ -154,3 +138,9 @@ Authorization: Bearer <accessToken>
 - `TransferPersistenceIntegrationTest`：透過 Testcontainers 啟動暫時的 MySQL 8.0 容器，驗證 JPA 寫入、MySQL 與轉帳稽核紀錄能一起運作；不會使用或修改本機的 `bank_demo`。
 
 執行整合測試前，請先開啟 Docker Desktop 並確認 `docker info` 可正常執行。第一次測試會下載 MySQL 映像檔，因此花較久是正常的。
+
+另外提供本機手動驗證腳本：
+
+- [scripts/test-transfer-permission.ps1](scripts/test-transfer-permission.ps1)：驗證不可從他人帳戶扣款。
+- [scripts/test-owned-transfer.ps1](scripts/test-owned-transfer.ps1)：驗證自己的帳戶可轉帳。
+- [scripts/test-my-transactions.ps1](scripts/test-my-transactions.ps1)：查看自己的交易紀錄分頁。
