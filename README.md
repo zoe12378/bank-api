@@ -69,6 +69,8 @@ $env:JWT_SECRET = [Convert]::ToBase64String($randomBytes)
 
 啟動成功後，服務位於 `http://localhost:8080`。
 
+正式部署時，平台需提供 `PORT`、`DB_PASSWORD`、`DB_USERNAME`、`JWT_SECRET` 與 `CORS_ALLOWED_ORIGINS` 環境變數。`CORS_ALLOWED_ORIGINS` 應只填入前端網址，例如 `https://your-app.vercel.app`，不要使用 `*`。
+
 ## API 摘要
 
 | 方法 | 路徑 | 說明 | 是否需 JWT |
