@@ -71,6 +71,8 @@ $env:JWT_SECRET = [Convert]::ToBase64String($randomBytes)
 
 正式部署時，平台需提供 `PORT`、`DB_PASSWORD`、`DB_USERNAME`、`JWT_SECRET` 與 `CORS_ALLOWED_ORIGINS` 環境變數。`CORS_ALLOWED_ORIGINS` 應只填入前端網址，例如 `https://your-app.vercel.app`，不要使用 `*`。
 
+對空白的雲端 MySQL，可額外設定 `FLYWAY_ENABLED=true`。應用程式會執行 [V1__initial_bank_schema.sql](src/main/resources/db/migration/V1__initial_bank_schema.sql) 建立資料表與展示資料；本機 Docker 維持使用既有 SQL 初始化檔。
+
 ## API 摘要
 
 | 方法 | 路徑 | 說明 | 是否需 JWT |
