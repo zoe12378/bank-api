@@ -83,4 +83,27 @@ class AuthPersistenceIntegrationTest {
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty())
                 .andExpect(jsonPath("$.username").value("new_customer"));
     }
+
+    @Test
+    void registerWithDuplicateUsername_returnsConsistentConflictError() throws Exception {
+        String credentials = """
+                {
+                  "username": "existing_customer",
+                  "password": "PracticePassword123!"
+                }
+                """;
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(credentials))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(credentials))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("使用者名稱已被使用"))
+                .andExpect(jsonPath("$.path").value("/api/auth/register"));
+    }
 }
