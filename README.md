@@ -9,6 +9,13 @@
 - [Bank Web](https://github.com/zoe12378/bank-web)：React 操作介面。
 - [Bank Stack](https://github.com/zoe12378/bank-stack)：以 Docker Compose 一次啟動 MySQL、API 與前端。
 
+## 線上體驗
+
+- [前端操作介面](https://bank-web-git-main-zoe12378s-projects.vercel.app/)
+- [Swagger API 文件](https://bank-api-production-41c0.up.railway.app/swagger-ui/index.html)
+
+線上環境使用獨立的雲端 MySQL。可先從前端建立測試帳號；管理員可在後台建立並指派帳戶。
+
 ## 功能
 
 - 使用者註冊、BCrypt 密碼雜湊、JWT 登入與 refresh token rotation。
@@ -140,6 +147,9 @@ Authorization: Bearer <accessToken>
 
 - `TransferServiceTest`：不啟動 Spring 或 MySQL 的單元測試，快速驗證轉帳規則。
 - `TransferPersistenceIntegrationTest`：透過 Testcontainers 啟動暫時的 MySQL 8.0 容器，驗證 JPA 寫入、MySQL 與轉帳稽核紀錄能一起運作；不會使用或修改本機的 `bank_demo`。
+- `AuthPersistenceIntegrationTest`：透過 Testcontainers 驗證新使用者能註冊、登入，並取得 access token 與 refresh token。
+
+推送到 `main` 或建立 Pull Request 時，GitHub Actions 的 **Backend CI** 也會自動執行上述測試。
 
 執行整合測試前，請先開啟 Docker Desktop 並確認 `docker info` 可正常執行。第一次測試會下載 MySQL 映像檔，因此花較久是正常的。
 
